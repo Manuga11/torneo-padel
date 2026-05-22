@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>InnvLive Admin</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<style>
+body{
+  font-family: Arial;
+  background:#0f172a;
+  color:white;
+  margin:0;
+}
+
+header{
+  background:#1e293b;
+  padding:20px;
+  text-align:center;
+}
+
+.card{
+  background:#111827;
+  margin:15px;
+  padding:15px;
+  border-radius:10px;
+}
+button{
+  padding:10px;
+  margin-top:10px;
+  cursor:pointer;
+}
+input, select{
+  padding:8px;
+  margin:5px;
+  width:100%;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🧑‍💻 InnvLive Admin</h1>
+</header>
+
+<div class="card">
+<h2>⚔️ Actualizar partido</h2>
+
+<select id="matchSelect"></select>
+
+<input id="score1" placeholder="Score equipo 1">
+<input id="score2" placeholder="Score equipo 2">
+
+<button onclick="updateMatch()">💾 Guardar resultado</button>
+</div>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAoHflU7avP2NZgpJKCtDW1H6k8PN7hR8",
+  authDomain: "innvlive.firebaseapp.com",
+  projectId: "innvlive",
+  storageBucket: "innvlive.firebasestorage.app",
+  messagingSenderId: "27078852998",
+  appId: "1:27078852998:web:e012a8b242d67214f96c07"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// 🔥 CARGAR PARTIDOS
+db.collection("matches").onSnapshot(snapshot=>{
+  let select = document.getElementById("matchSelect");
+  select.innerHTML = "";
+
+  snapshot.forEach(doc=>{
+    let m = doc.data();
+    let option = document.createElement("option");
+    option.value = doc.id;
+    option.text = `${m.team1} vs ${m.team2}`;
+    select.appendChild(option);
+  });
+});
+
+// 💾 ACTUALIZAR RESULTADO
+function updateMatch(){
+  let id = document.getElementById("matchSelect").value;
+  let s1 = document.getElementById("score1").value;
+  let s2 = document.getElementById("score2").value;
+
+  db.collection("matches").doc(id).update({
+    score1: Number(s1),
+    score2: Number(s2),
+    status: "finished"
+  });
+
+  alert("Resultado actualizado 🏆");
+}
+</script>
+
+</body>
+</html>
