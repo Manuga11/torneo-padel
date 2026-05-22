@@ -105,17 +105,40 @@
   });
 
   // 📊 CLASIFICACIÓN
-  db.collection("standings").onSnapshot((snapshot) => {
-    let html = "";
+  db.collection("standings")
+  .orderBy("points", "desc")
+  .onSnapshot((snapshot) => {
+    let html = `<div style="display:flex; flex-direction:column; gap:8px;">`;
+
+    let pos = 1;
+    
     snapshot.forEach(doc => {
       const s = doc.data();
+    
       html += `
-        <div style="padding:10px; background:#0f172a; border-left:3px solid #22c55e; margin-bottom:8px;">
-          🏅 ${s.team} — ${s.points} pts  
-          <small>GF: ${s.gamesWon} | GC: ${s.gamesLost}</small>
+        <div style="
+          background:#111827;
+          padding:12px;
+          border-radius:10px;
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+        ">
+          <div>
+            <strong>#${pos} ${s.team}</strong><br>
+            <small>GF: ${s.gamesWon} | GC: ${s.gamesLost}</small>
+          </div>
+    
+          <div style="font-size:18px;">
+            🏆 ${s.points} pts
+          </div>
         </div>
       `;
+    
+      pos++;
     });
+    
+    html += `</div>`;
     document.getElementById("standings").innerHTML = html;
   });
 
