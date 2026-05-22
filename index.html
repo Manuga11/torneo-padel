@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Torneo Pádel</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #0f172a;
+      color: #fff;
+    }
+    header {
+      background: #1e293b;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 { margin: 0; }
+    .container {
+      padding: 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+    .card {
+      background: #111827;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .group {
+      background: #1f2937;
+      padding: 10px;
+      border-radius: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      border-bottom: 1px solid #374151;
+      padding: 6px;
+      text-align: center;
+    }
+    .qr {
+      text-align: center;
+    }
+    img {
+      max-width: 200px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🏆 Torneo de Pádel</h1>
+  <p>Resultados en directo</p>
+</header>
+
+<div class="container">
+
+  <div class="card qr">
+    <h2>📲 Resultados en tiempo real</h2>
+    <p>Escanea el QR para ver la clasificación</p>
+    <img src="qr_torneo_padel.png" alt="QR Torneo" />
+  </div>
+
+  <div class="card">
+    <h2>📊 Grupos</h2>
+    <div class="grid">
+      <div class="group">
+        <h3>Grupo A</h3>
+        <p>A1, A2, A3, A4</p>
+      </div>
+      <div class="group">
+        <h3>Grupo B</h3>
+        <p>B1, B2, B3, B4</p>
+      </div>
+      <div class="group">
+        <h3>Grupo C</h3>
+        <p>C1, C2, C3, C4</p>
+      </div>
+      <div class="group">
+        <h3>Grupo D</h3>
+        <p>D1, D2, D3, D4</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>⚔️ Eliminatorias</h2>
+    <p>Cuartos → Semis → Final</p>
+    <ul>
+      <li>A1 vs B2</li>
+      <li>B1 vs A2</li>
+      <li>C1 vs D2</li>
+      <li>D1 vs C2</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>🏆 Premios</h2>
+    <p>🥇 Campeones: 300€</p>
+    <p>🥈 Subcampeones: 150€</p>
+  </div>
+
+</div>
+
+</body>
+</html>
