@@ -78,7 +78,12 @@
     let html = "";
     snapshot.forEach(doc => {
       const t = doc.data();
-      html += `<p>🏆 ${t.name} - ${t.status}</p>`;
+      html += `
+        <div style="padding:10px; background:#1f2937; border-radius:8px; margin-bottom:10px;">
+          <h3>🏆 ${t.name}</h3>
+          <p>Estado: ${t.status === "active" ? "🟢 En vivo" : "⚪ Inactivo"}</p>
+        </div>
+      `;
     });
     document.getElementById("tournaments").innerHTML = html;
   });
@@ -88,7 +93,13 @@
     let html = "";
     snapshot.forEach(doc => {
       const m = doc.data();
-      html += `<p>${m.team1} vs ${m.team2} → ${m.score1}-${m.score2}</p>`;
+      html += `
+        <div style="padding:10px; background:#111827; border-radius:8px; margin-bottom:10px;">
+          <strong>${m.team1} vs ${m.team2}</strong>
+          <p>🏟️ Pista ${m.court} | Ronda ${m.round}</p>
+          <p>🔥 ${m.score1} - ${m.score2}</p>
+        </div>
+      `;
     });
     document.getElementById("matches").innerHTML = html;
   });
@@ -98,7 +109,12 @@
     let html = "";
     snapshot.forEach(doc => {
       const s = doc.data();
-      html += `<p>🏅 ${s.team} | ${s.points} pts</p>`;
+      html += `
+        <div style="padding:10px; background:#0f172a; border-left:3px solid #22c55e; margin-bottom:8px;">
+          🏅 ${s.team} — ${s.points} pts  
+          <small>GF: ${s.gamesWon} | GC: ${s.gamesLost}</small>
+        </div>
+      `;
     });
     document.getElementById("standings").innerHTML = html;
   });
