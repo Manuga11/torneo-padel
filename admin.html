@@ -87,17 +87,74 @@ db.collection("matches").onSnapshot(snapshot=>{
 // 💾 ACTUALIZAR RESULTADO
 function updateMatch(){
   let id = document.getElementById("matchSelect").value;
-  let s1 = document.getElementById("score1").value;
-  let s2 = document.getElementById("score2").value;
+  let s1 = Number(document.getElementById("score1").value);
+  let s2 = Number(document.getElementById("score2").value);
 
-  db.collection("matches").doc(id).update({
-    score1: Number(s1),
-    score2: Number(s2),
-    status: "finished"
+  db.collection("matches").doc(id).get().then(doc=>{
+    let match = doc.data();
+
+    // 1. actualizar partido
+    db.collection("matches").doc(id).update({
+      score1: s1,
+      score2: s2,
+      status: "finished"
+    });
+
+    // 2. actualizar clasificación equipo 1
+    updateStanding(match.team1, s1, s2, match.group);
+
+    // 3. actualizar clasificación equipo 2
+    updateStanding(match.team2, s2, s1, match.group);
   });
 
   alert("Resultado actualizado 🏆");
 }
+
+// FUNCIÓN CLASIFICACION
+function updateStanding(team, gf, gc, group){
+
+  db.collection("standings")
+  .where("team", "==", team)
+  .get()
+  .then(snapshot => {
+
+    if(snapshot.empty){
+      // crear si no existe
+      db.collection("standings").add({
+        team: team,
+        group: group,
+        points: calculatePoints(gf, gc),
+        gamesWon: gf,
+        gamesLost: gc,
+        matchesPlayed: 1,
+        tournamentId: "main"
+      });
+
+    } else {
+      snapshot.forEach(doc=>{
+        let s = doc.data();
+
+        db.collection("standings").doc(doc.id).update({
+          points: s.points + calculatePoints(gf, gc),
+          gamesWon: s.gamesWon + gf,
+          gamesLost: s.gamesLost + gc,
+          matchesPlayed: s.matchesPlayed + 1
+        });
+      });
+    }
+  });
+}
+
+
+function calculatePoints(gf, gc){
+
+  // 🏆 regla tipo torneo padel
+  if(gf > gc) return 3;   // victoria
+  if(gf < gc) return 0;   // derrota
+  return 1;               // empate (si aplica)
+
+}
+  
 </script>
 
 </body>
