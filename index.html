@@ -59,8 +59,50 @@
 
 </div>
 
+  
 <script>
-  // 🔥 AQUÍ VAMOS A PONER TU CONFIG FIREBASE (SIGUIENTE PASO)
+  const firebaseConfig = {
+    apiKey: "AIzaSyAoHflkU7avP2NZgpJKCtDW1H6k8PN7hR8",
+    authDomain: "innvlive.firebaseapp.com",
+    projectId: "innvlive",
+    storageBucket: "innvlive.firebasestorage.app",
+    messagingSenderId: "27078852998",
+    appId: "1:27078852998:web:e012a8b242d67214f96c07"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // 🔥 TEST: TORNEOS
+  db.collection("tournaments").onSnapshot((snapshot) => {
+    let html = "";
+    snapshot.forEach(doc => {
+      const t = doc.data();
+      html += `<p>🏆 ${t.name} - ${t.status}</p>`;
+    });
+    document.getElementById("tournaments").innerHTML = html;
+  });
+
+  // ⚔️ PARTIDOS
+  db.collection("matches").onSnapshot((snapshot) => {
+    let html = "";
+    snapshot.forEach(doc => {
+      const m = doc.data();
+      html += `<p>${m.team1} vs ${m.team2} → ${m.score1}-${m.score2}</p>`;
+    });
+    document.getElementById("matches").innerHTML = html;
+  });
+
+  // 📊 CLASIFICACIÓN
+  db.collection("standings").onSnapshot((snapshot) => {
+    let html = "";
+    snapshot.forEach(doc => {
+      const s = doc.data();
+      html += `<p>🏅 ${s.team} | ${s.points} pts</p>`;
+    });
+    document.getElementById("standings").innerHTML = html;
+  });
+
 </script>
 
 </body>
