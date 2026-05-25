@@ -15,7 +15,6 @@ body{
   background:#0f172a;
   color:white;
   margin:0;
-  display:none;
 }
 
 header{
@@ -86,22 +85,21 @@ const auth = firebase.auth();
 
 // 🔐 LOGIN GOOGLE
 
-auth.onAuthStateChanged(user => {
+auth.signInWithPopup(
+  new firebase.auth.GoogleAuthProvider()
+)
+.then((result) => {
 
-  if(!user){
+  console.log("LOGIN OK");
 
-    auth.signInWithRedirect(
-      new firebase.auth.GoogleAuthProvider()
-    );
+  cargarPartidos();
 
-  } else {
+})
+.catch((error) => {
 
-    console.log("Admin autorizado:", user.email);
+  console.error("ERROR LOGIN:", error);
 
-    document.body.style.display = "block";
-
-    cargarPartidos();
-  }
+  alert(error.message);
 
 });
 
