@@ -3,10 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <title>InnvLive</title>
+
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
   <style>
+
     body {
       font-family: Arial;
       background: #0f172a;
@@ -30,6 +32,7 @@
       margin-bottom: 15px;
       border-radius: 10px;
     }
+
   </style>
 </head>
 
@@ -59,88 +62,142 @@
 
 </div>
 
-  
+
 <script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyAoHflkU7avP2NZgpJKCtDW1H6k8PN7hR8",
-    authDomain: "innvlive.firebaseapp.com",
-    projectId: "innvlive",
-    storageBucket: "innvlive.firebasestorage.app",
-    messagingSenderId: "27078852998",
-    appId: "1:27078852998:web:e012a8b242d67214f96c07"
-  };
 
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+const firebaseConfig = {
+  apiKey: "AIzaSyAoHflkU7avP2NZgpJKCtDW1H6k8PN7hR8",
+  authDomain: "innvlive.firebaseapp.com",
+  projectId: "innvlive",
+  storageBucket: "innvlive.firebasestorage.app",
+  messagingSenderId: "27078852998",
+  appId: "1:27078852998:web:e012a8b242d67214f96c07"
+};
 
-  // 🔥 TEST: TORNEOS
-  db.collection("tournaments").onSnapshot((snapshot) => {
-    let html = "";
-    snapshot.forEach(doc => {
-      const t = doc.data();
-      html += `
-        <div style="padding:10px; background:#1f2937; border-radius:8px; margin-bottom:10px;">
-          <h3>🏆 ${t.name}</h3>
-          <p>Estado: ${t.status === "active" ? "🟢 En vivo" : "⚪ Inactivo"}</p>
-        </div>
-      `;
-    });
-    document.getElementById("tournaments").innerHTML = html;
+firebase.initializeApp(firebaseConfig);
+
+const db = firebase.firestore();
+
+
+// 🏆 TORNEOS
+
+db.collection("tournaments").onSnapshot((snapshot) => {
+
+  let html = "";
+
+  snapshot.forEach(doc => {
+
+    const t = doc.data();
+
+    html += `
+      <div style="padding:10px; background:#1f2937; border-radius:8px; margin-bottom:10px;">
+
+        <h3>🏆 ${t.name}</h3>
+
+        <p>
+          Estado:
+          ${t.status === "active" ? "🟢 En vivo" : "⚪ Inactivo"}
+        </p>
+
+      </div>
+    `;
+
   });
 
-  // ⚔️ PARTIDOS
-  db.collection("matches").onSnapshot((snapshot) => {
-    let html = "";
-    snapshot.forEach(doc => {
-      const m = doc.data();
-      html += `
-        <div style="padding:10px; background:#111827; border-radius:8px; margin-bottom:10px;">
-          <strong>${m.team1} vs ${m.team2}</strong>
-          <p>🏟️ Pista ${m.court} | Ronda ${m.round}</p>
-          <p>🔥 ${m.score1} - ${m.score2}</p>
-        </div>
-      `;
-    });
-    document.getElementById("matches").innerHTML = html;
+  document.getElementById("tournaments").innerHTML = html;
+
+});
+
+
+// ⚔️ PARTIDOS
+
+db.collection("matches").onSnapshot((snapshot) => {
+
+  let html = "";
+
+  snapshot.forEach(doc => {
+
+    const m = doc.data();
+
+    html += `
+      <div style="padding:10px; background:#111827; border-radius:8px; margin-bottom:10px;">
+
+        <strong>
+          ${m.team1} vs ${m.team2}
+        </strong>
+
+        <p>
+          🏟️ Pista ${m.court} | Ronda ${m.round}
+        </p>
+
+        <p style="font-size:20px;">
+          🔥 ${m.score || "Pendiente"}
+        </p>
+
+      </div>
+    `;
+
   });
 
-  // 📊 CLASIFICACIÓN
-  db.collection("standings")
-  .orderBy("points", "desc")
-  .onSnapshot((snapshot) => {
-    let html = `<div style="display:flex; flex-direction:column; gap:8px;">`;
+  document.getElementById("matches").innerHTML = html;
 
-    let pos = 1;
-    
-    snapshot.forEach(doc => {
-      const s = doc.data();
-    
-      html += `
-        <div style="
-          background:#111827;
-          padding:12px;
-          border-radius:10px;
-          display:flex;
-          justify-content:space-between;
-          align-items:center;
-        ">
-          <div>
-            <strong>#${pos} ${s.team}</strong><br>
-            <small>GF: ${s.gamesWon} | GC: ${s.gamesLost}</small>
-          </div>
-    
-          <div style="font-size:18px;">
-            🏆 ${s.points} pts
-          </div>
+});
+
+
+// 📊 CLASIFICACIÓN
+
+db.collection("standings")
+.orderBy("points", "desc")
+.onSnapshot((snapshot) => {
+
+  let html = `
+    <div style="display:flex; flex-direction:column; gap:8px;">
+  `;
+
+  let pos = 1;
+
+  snapshot.forEach(doc => {
+
+    const s = doc.data();
+
+    html += `
+      <div style="
+        background:#111827;
+        padding:12px;
+        border-radius:10px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+      ">
+
+        <div>
+
+          <strong>
+            #${pos} ${s.team}
+          </strong><br>
+
+          <small>
+            GF: ${s.gamesWon} | GC: ${s.gamesLost}
+          </small>
+
         </div>
-      `;
-    
-      pos++;
-    });
-    
-    html += `</div>`;
-    document.getElementById("standings").innerHTML = html;
+
+        <div style="font-size:18px;">
+          🏆 ${s.points} pts
+        </div>
+
+      </div>
+    `;
+
+    pos++;
+
   });
+
+  html += `</div>`;
+
+  document.getElementById("standings").innerHTML = html;
+
+});
 
 </script>
 
