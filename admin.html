@@ -90,7 +90,7 @@ auth.onAuthStateChanged(user => {
 
   if(!user){
 
-    auth.signInWithPopup(
+    auth.signInWithRedirect(
       new firebase.auth.GoogleAuthProvider()
     );
 
