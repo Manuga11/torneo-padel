@@ -57,8 +57,9 @@ input, select{
 
 <select id="matchSelect"></select>
 
-<input id="score1" placeholder="Score equipo 1">
-<input id="score2" placeholder="Score equipo 2">
+<input id="set1" placeholder="Set 1 ejemplo: 6-2">
+<input id="set2" placeholder="Set 2 ejemplo: 6-4">
+<input id="set3" placeholder="Set 3 opcional ejemplo: 7-5">
 
 <button onclick="updateMatch()">
 💾 Guardar resultado
@@ -83,12 +84,12 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 
 
-// 🔐 LOGIN GOOGLE
+// 🔐 LOGIN
 
 auth.signInWithPopup(
   new firebase.auth.GoogleAuthProvider()
 )
-.then((result) => {
+.then(() => {
 
   console.log("LOGIN OK");
 
@@ -97,7 +98,7 @@ auth.signInWithPopup(
 })
 .catch((error) => {
 
-  console.error("ERROR LOGIN:", error);
+  console.error(error);
 
   alert(error.message);
 
@@ -133,116 +134,30 @@ function cargarPartidos(){
 }
 
 
-// 💾 ACTUALIZAR RESULTADO
+// 💾 GUARDAR RESULTADO
 
 function updateMatch(){
 
   let id = document.getElementById("matchSelect").value;
 
-  let s1 = Number(document.getElementById("score1").value);
+  let set1 = document.getElementById("set1").value;
 
-  let s2 = Number(document.getElementById("score2").value);
+  let set2 = document.getElementById("set2").value;
 
-  db.collection("matches").doc(id).get().then(doc=>{
+  let set3 = document.getElementById("set3").value;
 
-    let match = doc.data();
+  let finalScore = set3
+    ? `${set1} / ${set2} / ${set3}`
+    : `${set1} / ${set2}`;
 
-    // 1. actualizar partido
+  db.collection("matches").doc(id).update({
 
-    db.collection("matches").doc(id).update({
-      score1: s1,
-      score2: s2,
-      status: "finished"
-    });
-
-    // 2. actualizar clasificación equipo 1
-
-    updateStanding(
-      match.team1,
-      s1,
-      s2,
-      match.group
-    );
-
-    // 3. actualizar clasificación equipo 2
-
-    updateStanding(
-      match.team2,
-      s2,
-      s1,
-      match.group
-    );
+    score: finalScore,
+    status: "finished"
 
   });
 
   alert("Resultado actualizado 🏆");
-
-}
-
-
-// 📊 CLASIFICACIÓN
-
-function updateStanding(team, gf, gc, group){
-
-  db.collection("standings")
-  .where("team", "==", team)
-  .get()
-  .then(snapshot => {
-
-    if(snapshot.empty){
-
-      // crear si no existe
-
-      db.collection("standings").add({
-
-        team: team,
-        group: group,
-        points: calculatePoints(gf, gc),
-        gamesWon: gf,
-        gamesLost: gc,
-        matchesPlayed: 1,
-        tournamentId: "main"
-
-      });
-
-    } else {
-
-      snapshot.forEach(doc=>{
-
-        let s = doc.data();
-
-        db.collection("standings")
-        .doc(doc.id)
-        .update({
-
-          points: s.points + calculatePoints(gf, gc),
-
-          gamesWon: s.gamesWon + gf,
-
-          gamesLost: s.gamesLost + gc,
-
-          matchesPlayed: s.matchesPlayed + 1
-
-        });
-
-      });
-
-    }
-
-  });
-
-}
-
-
-// 🏆 CALCULAR PUNTOS
-
-function calculatePoints(gf, gc){
-
-  if(gf > gc) return 3;
-
-  if(gf < gc) return 0;
-
-  return 1;
 
 }
 
